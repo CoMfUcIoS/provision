@@ -90,6 +90,9 @@ class ABSProvision
         node = { 'uri' => host['hostname'],
                  'config' => { 'transport' => 'ssh', 'ssh' => { 'user' => ENV['ABS_USER'], 'host-key-check' => false } },
                  'facts' => { 'provisioner' => 'abs', 'platform' => host['type'], 'job_id' => job_id } }
+        if !ENV['HOST_KEY_CHECK'].nil? && ENV['HOST_KEY_CHECK'] == 'true'
+          node['config']['ssh']['host-key-check'] = true
+        end
         if !ENV['ABS_SSH_PRIVATE_KEY'].nil? && !ENV['ABS_SSH_PRIVATE_KEY'].empty?
           node['config']['ssh']['private-key'] = ENV['ABS_SSH_PRIVATE_KEY']
         else
