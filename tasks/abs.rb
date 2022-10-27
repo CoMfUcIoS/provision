@@ -100,9 +100,15 @@ class ABSProvision
         end
         group_name = 'ssh_nodes'
       else
-        node = { 'uri' => host['hostname'],
+        if !ENV['WIN_USE_SSH'].nil? && ENV['WIN_USE_SSH'] == 'true'
+          node = { 'uri' => host['hostname'],
+                 'config' => { 'transport' => 'ssh', 'ssh' => { 'user' => ENV['ABS_WIN_USER'], 'password' => ENV['ABS_PASSWORD'], 'host-key-check' => true } },
+                 'facts' => { 'provisioner' => 'abs', 'platform' => host['type'], 'job_id' => job_id } }
+        else
+          node = { 'uri' => host['hostname'],
                  'config' => { 'transport' => 'winrm', 'winrm' => { 'user' => ENV['ABS_WIN_USER'], 'password' => ENV['ABS_PASSWORD'], 'ssl' => false } },
                  'facts' => { 'provisioner' => 'abs', 'platform' => host['type'], 'job_id' => job_id } }
+        end
         group_name = 'winrm_nodes'
       end
       unless vars.nil?
